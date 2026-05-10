@@ -1,4 +1,5 @@
-// Cutting Wood
+// Cutting Wood similar to Koko eating banana with some variations
+
 // You are given an array representing the heights of trees, and an integer k representing the total length of wood that needs to be cut.
 
 // For this task, a woodcutting machine is set to a certain height, H. The machine cuts off the top part of all trees taller than H, while trees shorter than H remain untouched. Determine the highest possible setting of the woodcutter (H) so that it cuts at least k meters of wood.
