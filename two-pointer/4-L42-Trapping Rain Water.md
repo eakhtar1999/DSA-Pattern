@@ -55,4 +55,53 @@ public class Solution {
 }
 ```
 
+ **Container With Most Water** Vs **Trapping Rain Water**, you are seeing the "Two Pointers" technique evolve from a simple comparison to a complex boundary-tracking system.
+
+Here is a comparison of the decisions and strategies used in both, so you can connect the dots in your notes:
+
+### 1. The Strategy: "Greedy" Pointer Movement
+
+* **Container With Most Water:** You move the pointer pointing to the **shorter line**.
+* *Decision:* The area is limited by the shorter line. Moving the taller line can only make the area smaller (same height or worse, smaller width).
+
+
+* **Trapping Rain Water:** You also process the side with the **smaller maximum height** (`leftMax < rightMax`).
+* *Decision:* Water level is determined by the "bottleneck" (the lower of the two boundaries). By processing the smaller side, you ensure you don't need to know the exact height of the taller side—you just need to know it's "tall enough" to hold the water.
+
+
+
+### 2. The Strategy: Tracking State
+
+* **Container With Most Water:** You only care about the **current** heights at `l` and `r`.
+* *Note:* It’s a "stateless" calculation (Width × Min Height).
+
+
+* **Trapping Rain Water:** You must track the **historical** maximums (`leftMax` and `rightMax`).
+* *Note:* It’s a "stateful" calculation. You need to know the tallest wall you've seen *so far* to know if a "dip" or "hole" exists where water can be trapped.
+
+
+
+### 3. The Strategy: Result Accumulation
+
+* **Container With Most Water:** You use `Math.max(res, area)` because you only want the single **best** container.
+* **Trapping Rain Water:** You use `res += ...` because you are **summing up** many small pockets of water across the entire terrain.
+
+---
+
+### Comparison Summary Table for your Notes
+
+| Feature | [Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/) |
+| --- | --- | --- |
+| **Pointer Movement** | Move the shorter line. | Move from the side with the smaller max. |
+| **Calculation** | `Math.min(h1, h2) * width` | `CurrentMax - CurrentHeight` |
+| **Variables** | Just pointers and `maxArea`. | Pointers, `leftMax`, and `rightMax`. |
+| **Goal** | Find the single maximum volume. | Find the total accumulated volume. |
+
+### Why this matters for the "Next" Problem:
+
+When you see a problem involving arrays and "boundaries" or "ranges," ask yourself:
+
+1. Do I need the **global best** (like Container)? → Use Two Pointers + `Math.max`.
+2. Do I need to **accumulate** values (like Trapping Water)? → Use Two Pointers + Boundary Tracking.
+
 
