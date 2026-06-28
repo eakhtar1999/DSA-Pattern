@@ -23,14 +23,15 @@ class Solution {
 
     private void backtrack(int[][] maze, int row, int col, String path,
                            boolean[][] visited, java.util.List<String> result) {
-
+        // Solution Case
         if (row == maze.length - 1 && col == maze.length - 1) { // reached end
             result.add(path);
             return;
         }
+        //mark visited
+        visited[row][col] = true; 
 
-        visited[row][col] = true; // mark
-
+        //core : DFS in 4 directions and update path string
         // D L R U (fixed order for lexicographic paths)
         int[] dr = {1, 0, 0, -1};
         int[] dc = {0, -1, 1, 0};
@@ -44,13 +45,14 @@ class Solution {
                 backtrack(maze, r, c, path + move[i], visited, result);
             }
         }
-
-        visited[row][col] = false; // undo
+        //backtrack
+        visited[row][col] = false; 
     }
 
     private boolean isSafe(int[][] maze, int r, int c, boolean[][] visited) {
+        //inside box + open + not visited
         return r >= 0 && c >= 0 && r < maze.length && c < maze.length
-                && maze[r][c] == 1 && !visited[r][c]; // inside + open + not visited
+                && maze[r][c] == 1 && !visited[r][c]; 
     }
 }
 
