@@ -1,3 +1,10 @@
+// The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+// Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+//--
+// 💡 Use backtracking to try placing queens row by row.
+// 💡 Track columns, diagonals, and anti-diagonals that are under attack.
+// 💡 A queen attacks along rows, columns, and both diagonals.
+
 class Solution {
     public int totalNQueens(int n) {
         int[] result={0};
