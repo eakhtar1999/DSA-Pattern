@@ -7,6 +7,27 @@
 // 2. 1 step + 2 steps
 // 3. 2 steps + 1 step
 
+
+class Solution {
+    public int climbStairsSpaceOptimised(int n) {
+
+        if (n <= 2) return n;
+
+        int prev2 = 1; // dp[1]
+        int prev1 = 2; // dp[2]
+
+        for (int i = 3; i <= n; i++) {
+            int curr = prev1 + prev2;
+
+            prev2 = prev1;
+            prev1 = curr;
+        }
+
+        return prev1;
+    }
+}
+
+
 class Solution {
     public int climbStairs(int n) {
     // Fibonacci variant — dp[i] = dp[i-1] + dp[i-2]
