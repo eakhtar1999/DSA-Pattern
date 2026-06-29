@@ -22,7 +22,7 @@ class Solution {
         return Math.max(case1, case2);
     }
 
-    // same logic as your original code, just on a subarray
+    // same logic as your House Robber code, just on a subarray
     private int robHelper(int[] nums, int start, int end) {
         int rob1 = 0; // i-2
         int rob2 = 0; // i-1
