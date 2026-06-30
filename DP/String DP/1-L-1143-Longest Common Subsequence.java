@@ -15,26 +15,59 @@
                                           
 
 class Solution {
-    public int longestCommonSubsequence(String text1, String text2) {
+    // Function to return the LCS string of text1 and text2
+    public String longestCommonSubsequence(String text1, String text2) {
         int n = text1.length();
         int m = text2.length();
 
+        // Create DP table to store lengths of LCS for all substrings
         int[][] dp = new int[n + 1][m + 1];
-        // Build answer from smaller prefixes to larger prefixes
+
+        // Fill dp table bottom-up
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= m; j++) {
-                // Characters match → include it in LCS
                 if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    // Characters match: increase length by 1
                     dp[i][j] = 1 + dp[i - 1][j - 1];
-                } 
-                // Characters don't match → skip one char from either string
-                else {
+                } else {
+                    // Characters don't match: take max of left and top
                     dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
                 }
             }
         }
 
-        return dp[n][m];
+        // Reconstruct LCS string from dp table
+        StringBuilder lcs = new StringBuilder();
+        int i = n, j = m;
+
+        // Traverse dp table from bottom-right to top-left
+        while (i > 0 && j > 0) {
+            if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                // Characters match, add to result and move diagonally
+                lcs.append(text1.charAt(i - 1));
+                i--;
+                j--;
+            } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                // Move up if top cell has greater value
+                i--;
+            } else {
+                // Move left otherwise
+                j--;
+            }
+        }
+
+        // Reverse string since it was built backwards
+        return lcs.reverse().toString();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        String s1 = "abcde";
+        String s2 = "ace";
+
+        Solution sol = new Solution();
+        System.out.println("LCS: " + sol.longestCommonSubsequence(s1, s2));
     }
 }
 
