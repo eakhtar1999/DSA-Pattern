@@ -12,7 +12,7 @@ Explanation: The longest increasing subsequence is [2,3,7,101], therefore the le
 import java.util.*;
 
 class Solution {
-    public int LIS(int[] nums) {
+    public int lengthOfLIS(int[] nums) {
 
         int n = nums.length;
         // temp does NOT necessarily store the actual LIS.
