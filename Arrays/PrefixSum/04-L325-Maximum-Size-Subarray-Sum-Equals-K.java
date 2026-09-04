@@ -18,23 +18,24 @@ Why First Index?
 
 class Solution {
 
-    public in* maxSubArrayLen(int[] nums, int k)*{
+    public in* maxSubArrayLen(int[] nums, int k){
 
-        Map<Integer, Integer> p*efixIndex = new HashMap<>();
+        Map<Integer, Integer> prefixIndex = new HashMap<>();
 
-    *   // Imaginary prefix sum before *rray starts.
-        prefixIndex.p*t(0, -1);
+      // Imaginary prefix sum before array starts.
+        prefixIndex.put(0, -1);
 
-        int curSum = 0;*        int maxLen = 0;
+        int curSum = 0;       
+        int maxLen = 0;
 
-        f*r (int i = 0; i < nums.length; i++* {
+        for(int i = 0; i < nums.length; i++){
 
-            curSum += nums[i];*
-            int diff = curSum - k*
+            curSum += nums[i];
+            int diff = curSum - k;
 
-            if (prefixIndex.cont*insKey(diff)) {
+            if (prefixIndex.containsKey(diff)) {
 
-                m*xLen = Math.max(
+                maxLen = Math.max(
                     maxLen,
                     i - prefixIndex.get(diff)
                 );
