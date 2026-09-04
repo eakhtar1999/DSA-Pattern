@@ -21,25 +21,25 @@ Lookup:
 
 class Solution {
 
-    public in* countZeroSumSubarrays(int[] nums)*{
+    public int countZeroSumSubarrays(int[] nums)*{
 
         int res = 0;
-        in* curSum = 0;
+        int curSum = 0;
 
-        Map<Integer,*Integer> prefixFreq = new HashMap<*();
+        Map<Integer,Integer> prefixFreq = new HashMap<>();
 
-        prefixFreq.put(0, 1);*
+        prefixFreq.put(0, 1);
         for (int num : nums) {
 
- *          curSum += num;
+           curSum += num;
 
-        *   res += prefixFreq.getOrDefault(*urSum, 0);
+           res += prefixFreq.getOrDefault(curSum, 0);
 
-            prefixFreq*put(
+            prefixFreq.put(
                 curSum,
-     *          prefixFreq.getOrDefault(*urSum, 0) + 1
+               prefixFreq.getOrDefault(curSum, 0) + 1
             );
-     *  }
+       }
 
         return res;
     }
