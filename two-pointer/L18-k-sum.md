@@ -85,10 +85,10 @@ public class Solution {
 
 ```text
 Complexity
-- **Time:** $O(n^{k-1})$
-- For 4Sum: $O(n^3)$
-- **Auxiliary space:** $O(k)$ for recursion and the current quadruplet.
-- **Output space:** $O(m)$, where $m$ is the number of quadruplets returned.
+- **Time:** O(n^{k-1})
+- For 4Sum: O(n^3)
+- **Auxiliary space:** O(k) for recursion and the current quadruplet.
+- **Output space:** O(m), where m is the number of quadruplets returned.
 ```
 
 
