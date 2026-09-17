@@ -7,7 +7,7 @@
 🟢 Jump Game variants
 🟢 BFS with state (position + cost/action)
 
-
+```text
 A frog is crossing a river. The river is divided into some number of units, and at each unit, 
 there may or may not exist a stone. The frog can jump on a stone, but it must not jump into the water.
 Given a list of stones positions (in units) in sorted ascending order, determine if the frog can cross the river 
@@ -18,6 +18,7 @@ Example 1:
 Input: stones = [0,1,3,5,6,8,12,17]
 Output: true
 Explanation: The frog can jump to the last stone by jumping 1 unit to the 2nd stone, then 2 units to the 3rd stone, then 2 units to the 4th stone, then 3 units to the 6th stone, 4 units to the 7th stone, and 5 units to the 8th stone.
+```text
 
 ```text
 stones[]     → the fixed positions in the river (read-only, ordered)
