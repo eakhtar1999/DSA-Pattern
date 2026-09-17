@@ -1,0 +1,30 @@
+You are given an integer array cost where cost[i] is the cost of ith step on a staircase.
+Once you pay the cost, you can either climb one or two steps.
+You can either start from the step with index 0, or the step with index 1.
+Return the minimum cost to reach the top of the staircase, which is the position just past the last step (index cost.length).
+Example 1:
+Input: cost = [10,15,20]
+Output: 15
+Explanation: You will start at index 1.
+- Pay 15 and climb two steps to reach the top.
+The total cost is 15.
+
+```java
+class Solution {
+    public int minCostClimbingStairs(int[] cost) {
+        int n = cost.length;
+        int[] dp = new int[n];
+        for (int i=0; i<n; i++) {
+	    	if (i<2) dp[i] = cost[i]; // start from step 0 or step 1
+	    	else dp[i] = cost[i] + Math.min(dp[i-1], dp[i-2]);
+	    }
+	    return Math.min(dp[n-1], dp[n-2]); // top is the position just past the last step (index cost.length).
+    }
+    
+}
+```
+
+So "start from step 0 or step 1" means: at the very beginning, before any cost has been paid, you get a free choice between two entry points, and the DP has to consider both possibilities and let the cheaper one win.
+That's exactly why dp[0] = cost[0] and dp[1] = cost[1] are set independently rather than dp[1] = cost[1] + dp[0] — if it were the latter, you'd be forcing every path to step onto 0 first (paying for it) before it could ever reach 1, which would contradict "you may start directly at 1 without ever touching 0."
+
+the top isn't a real step at all, which is why the final answer needs Math.min(dp[n-1], dp[n-2]) instead of indexing a dp[n] that doesn't semantically exist — free start on one end, virtual target on the other, and each shows up in a different part of the code.
