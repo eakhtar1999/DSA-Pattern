@@ -10,6 +10,7 @@ Explanation: Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
 
 ## One-line rule
 > *"Adjacency constraint moves from array-neighbor to parent-child — so the DP state moves from an array index to a tree node, and the fix for the resulting exponential blowup isn't a memo table, it's making one post-order visit answer both 'rob me' and 'skip me' at once, so no node is ever asked twice."*
+> This is the tree-DP equivalent of converting "recursion with overlapping calls" into "one clean pass" — except here the fix isn't switching from recursion to a loop (you can't loop over a tree the way you loop over an array), it's enriching what each recursive call returns so a second call is never needed.
 
 ```java
 class Solution {
