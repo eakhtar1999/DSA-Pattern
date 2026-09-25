@@ -46,7 +46,7 @@ class Solution {
             }
         }
 
-        // Reconstruct LIS sequence
+        // Reconstruct LIS sequence > we are backtracking from index having max LIS via prev, prev stores value of last element which got added to its current index element
         List<Integer> lisSeq = new ArrayList<>();
         int curr = maxIndex;
         while (curr != -1) {
