@@ -1,59 +1,88 @@
-Interview Explanation
+# Trees: Morris Traversal (Inorder + Preorder)
 
-> I traverse the tree with a current pointer. If the current node has no left child, I add it to the result and move right. Otherwise, I find the rightmost node in its left subtree. If that node has no thread yet, I link it temporarily to the current node and move left. When I encounter the thread again, the left subtree is complete, so I remove the thread, add the current node, and move right. This gives inorder traversal without recursion or an auxiliary stack.
-> 
-> **One-line rule:** *"No left: print and go right. Otherwise find the rightmost node of the left subtree. If it's empty, thread it and go left. If it already points to me, cut it, print, and go right."*
-
-## Recognition: when Morris is the answer
-- The question asks for an inorder or preorder traversal with **O(1) extra space**, or says "no recursion, no stack."
-- Follow-ups like "Kth smallest in BST / Recover BST / validate BST **in O(1) space**."
-- **Anti-signal:** if O(h) space is fine, use a recursive traversal or an iterative traversal with a `Deque`. They're simpler and less bug-prone in an interview. Morris is the answer to a follow-up question, not your default.
-
-## Memory model: the lines to code from
-- **State:** `cur` is the node being processed, and `pred` is the rightmost node of `cur.left`, which is cur's inorder predecessor.
+---
+ 
+## 1. How to recognize this pattern from the question
+ 
+Say "Morris" when you see:
+ 
+- An inorder or preorder traversal with **O(1) extra space**, or "no recursion, no stack."
+- Follow-ups like "Kth smallest in BST", "Recover BST", or "Validate BST" **in O(1) space**.
+**Anti-signals:**
+- O(h) space is acceptable → use recursive DFS or iterative DFS with a `Deque`. They're simpler and less bug-prone. Morris is the answer to a *follow-up*, not your default.
+- Postorder → Morris postorder needs right-chain reversal and is rarely asked. Use one stack, or do Ro-R-L preorder and reverse the result.
+- Level-by-level structure → BFS with a queue, not Morris.
+---
+ 
+## 2. Memory model — the lines to code from
+ 
+- **State:** `cur` is the node being processed. `pred` is the rightmost node of `cur.left`, which is cur's inorder predecessor.
 - **Three cases:**
-  - **No left child:** visit `cur`, then go right.
-  - **Left child exists and `pred.right == null` (first visit):** thread `pred.right = cur`, then go left.
-  - **Left child exists and `pred.right == cur` (second visit):** unthread `pred.right = null`, visit `cur`, then go right.
-- **Invariant:** "When I reach `cur` through a thread, its whole left subtree has already been output."
-- **Preorder variant:** the only change is to visit `cur` when you *create* the thread instead of when you remove it.
-
-## Variables and their jobs
+  1. **No left child** → visit `cur` (both traversals), go right.
+  2. **Left exists, `pred.right == null` (first visit)** → create thread `pred.right = cur`, go left. *Preorder visits here.*
+  3. **Left exists, `pred.right == cur` (second visit)** → left subtree is done; remove thread `pred.right = null`, go right. *Inorder visits here.*
+- **Invariant:** "When I reach `cur` through a thread, its whole left subtree has already been processed."
+- **The only difference between the two traversals:** preorder records when the thread is **created**; inorder records when the thread is **removed**. The no-left case records in both.
+---
+ 
+## 3. Variables and their jobs
+ 
 | Variable | Job |
 |---|---|
-| `cur` | The node being processed. It only moves at the end of a case: left after threading, right after visiting. |
+| `cur` | The node being processed. Moves exactly once per loop iteration: left after threading, right otherwise. |
 | `pred` | A scout that walks to the rightmost node of `cur.left`. It never replaces `cur`. |
-| `pred.right` | Doubles as a "have I been here" flag: `null` means first visit, `cur` means second visit. |
-
-
-## Iteration rules (the NPE and infinite-loop traps)
-1. `pred` starts at `cur.left`, never at `cur`. This is safe because you're in the `else` branch, so `cur.left != null`.
-2. The predecessor loop needs **both** stop conditions, `pred.right != null && pred.right != cur`. Without the second one you get an infinite loop.
-3. Every path through the loop body must move `cur` exactly once. If a path doesn't move it, you get an infinite loop.
-4. Every thread you create must be removed. Otherwise the caller's tree comes back corrupted, and a later traversal of it cycles.
-5. Only one scouting pointer walks down the tree (`pred`). If you catch yourself reassigning `cur` inside a search loop, that's the bug from #1 again.
-
-## Fixed code
+| `pred.right` | Doubles as a "have I been here" flag: `null` = first visit, `cur` = second visit. |
+| `cur.right` (in case 1) | Either a real right child, or a thread that jumps back up to an ancestor. This jump is how Morris returns without a stack. |
+ 
+---
+ 
+## 4. One-line rule
+ 
+> *"No left: record and go right. Otherwise find the rightmost node of the left subtree. If it's empty, thread it and go left (preorder records here). If it already points to me, cut it and go right (inorder records here)."*
+ 
+---
+ 
+## 5. Iteration rules — the NPE and infinite-loop traps
+ 
+1. **`pred` starts at `cur.left`, never at `cur`.** Safe because you're in the `else` branch, so `cur.left != null`.
+2. **Only `pred` scouts.** If you catch yourself reassigning `cur` inside the predecessor search, you've lost the node you're processing.
+3. **The predecessor loop needs both stop conditions:** `pred.right != null && pred.right != cur`. Without the second one, on the second visit the loop follows the thread back to `cur` and cycles forever.
+4. **Every path through the loop body moves `cur` exactly once.** A path that doesn't move it is an infinite loop.
+5. **Every thread created must be removed.** Otherwise the caller's tree comes back corrupted, and any later traversal cycles.
+6. **The thread direction is `pred.right = cur`**, from predecessor to current, never the reverse.
+---
+ 
+## 6. Code — one method for both traversals (verified)
+ 
 ```java
 class Solution {
-    public List<Integer> getInorder(TreeNode root) {
+    // preorder = true  -> Ro, L, R
+    // preorder = false -> L, Ro, R (inorder)
+    public List<Integer> morris(TreeNode root, boolean preorder) {
         List<Integer> res = new ArrayList<>();
         TreeNode cur = root;
         while (cur != null) {
-            if (cur.left == null) {                 // case 1: no left subtree
+            // CASE 1: no left subtree -> record (BOTH traversals), go right
+            //         (right may be a real child OR a thread back up to an ancestor)
+            if (cur.left == null) {
                 res.add(cur.data);
-                cur = cur.right;                    // may follow a thread up; that's intended
+                cur = cur.right;
             } else {
-                TreeNode pred = cur.left;           // scout, NOT cur
+                // find inorder predecessor = rightmost node of left subtree
+                // stop at null (no thread yet) OR at cur (thread exists)
+                TreeNode pred = cur.left;
                 while (pred.right != null && pred.right != cur) {
-                    pred = pred.right;              // stop at null OR at existing thread
+                    pred = pred.right;
                 }
-                if (pred.right == null) {           // case 2: first visit
-                    pred.right = cur;               // create thread
+                if (pred.right == null) {
+                    // CASE 2: first visit -> create thread, go left
+                    if (preorder) res.add(cur.data);      // PREORDER records here
+                    pred.right = cur;
                     cur = cur.left;
-                } else {                            // case 3: second visit, left done
-                    pred.right = null;              // remove thread (restore tree)
-                    res.add(cur.data);
+                } else {
+                    // CASE 3: second visit -> left subtree done, remove thread, go right
+                    if (!preorder) res.add(cur.data);     // INORDER records here
+                    pred.right = null;                    // restore original tree
                     cur = cur.right;
                 }
             }
@@ -62,6 +91,26 @@ class Solution {
     }
 }
 ```
-**Complexity:** O(n) time, because each edge is walked at most about 3 times. O(1) extra space.
-
-Noted on Java + Spring Boot. Your memory setting is off, so I can't save that across chats myself. It's already the stated language in your pattern docs, though, and you can turn memory on in Settings if you want it remembered everywhere. Want me to write this up as the start of a Trees pattern doc in the same format as your Two Pointers and DP docs?
+ 
+- *Complexity:* O(n) time (each edge is walked at most ~3 times), O(1) extra space.
+### Quick trace — tree `1 → (2 → (4, 5), 3)`
+ 
+| Step | `cur` | What happens | Preorder output | Inorder output |
+|---|---|---|---|---|
+| 1 | 1 | pred = 5, no thread → thread 5→1, go left | **1** | — |
+| 2 | 2 | pred = 4, no thread → thread 4→2, go left | **2** | — |
+| 3 | 4 | no left → record, follow thread to 2 | **4** | **4** |
+| 4 | 2 | thread 4→2 exists → cut, go right to 5 | — | **2** |
+| 5 | 5 | no left → record, follow thread to 1 | **5** | **5** |
+| 6 | 1 | thread 5→1 exists → cut, go right to 3 | — | **1** |
+| 7 | 3 | no left → record, `cur` = null | **3** | **3** |
+ 
+Preorder: `[1, 2, 4, 5, 3]` · Inorder: `[4, 2, 5, 1, 3]`
+ 
+---
+ 
+## 7. Interview explanation (say this out loud)
+ 
+> I use Morris traversal to walk the tree without recursion or a stack, in O(1) extra space. For each node, if it has no left child, I record it and move right. Otherwise I find its inorder predecessor, the rightmost node in its left subtree. If the predecessor has no right link yet, this is my first visit: I link it back to the current node temporarily and move left. For preorder, I record the node at this point. If the link is already there, the left subtree is finished: I remove the link and move right. For inorder, I record the node at this point. The temporary links let me return to each node after its left subtree is done, and removing them restores the original tree.
+ 
+---
