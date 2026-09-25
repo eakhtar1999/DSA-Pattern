@@ -1,5 +1,7 @@
 Interview Explanation
+
 > I traverse the tree with a current pointer. If the current node has no left child, I add it to the result and move right. Otherwise, I find the rightmost node in its left subtree. If that node has no thread yet, I link it temporarily to the current node and move left. When I encounter the thread again, the left subtree is complete, so I remove the thread, add the current node, and move right. This gives inorder traversal without recursion or an auxiliary stack.
+> 
 > **One-line rule:** *"No left: print and go right. Otherwise find the rightmost node of the left subtree. If it's empty, thread it and go left. If it already points to me, cut it, print, and go right."*
 
 ## Recognition: when Morris is the answer
