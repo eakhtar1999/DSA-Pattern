@@ -1,9 +1,10 @@
-
+```textquote
 Given an integer array nums of unique elements, return all possible subsets (the power set).
 The solution set must not contain duplicate subsets. Return the solution in any order.
 Example 1:
 Input: nums = [1,2,3]
 Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+```
 
 
 > "It's a backtracking solution implemented using recursion. At every index I have two choices: include the current element or exclude it. I add the element, recursively explore that branch, then remove it to restore the previous state before exploring the exclude branch. That restoration step is the backtracking."
